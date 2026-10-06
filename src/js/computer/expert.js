@@ -262,23 +262,45 @@ function xAcceptOffer(G,pi,o){
   return now===before && get>=give*1.35;
 }
 /* ---- the opening ---- */
+/* the starting position: strong numbers (6 and 8 are rolled most), and all five resources between the
+   two settlements — without ore or wheat there are no cities and no cards, without wood or brick no roads */
+const X_OPEN_KIND_BONUS=2.2, X_OPEN_ALL5_BONUS=3.0, X_OPEN_HOT_BONUS=1.5;
+function xOpenKinds(B,vid){
+  const out={};
+  for(const hid of B.verts[vid].hexes){ const h=B.hexById[hid]; const r=h&&TERRAIN_RES[h.terrain];
+    if(r&&r!=='gold'&&PIP(h.num)>0) out[r]=(out[r]||0)+PIP(h.num); }
+  return out;
+}
+/* what a corner adds to the starting position, on top of the plain corner value: the resources we
+   would be missing otherwise, and the hot numbers */
+function xOpenBonus(G,B,vid,prod){
+  const kinds=xOpenKinds(B,vid); let bonus=0, have=0, add=0;
+  RES.forEach(r=>{ if(prod[r]>0) have++; });
+  for(const r in kinds){ if(!(prod[r]>0)){ add++; bonus+=X_OPEN_KIND_BONUS*(r==='ore'||r==='wheat'?1.2:1); } }
+  if(have+add>=5) bonus+=X_OPEN_ALL5_BONUS;
+  for(const hid of B.verts[vid].hexes){ const h=B.hexById[hid]; if(h&&(h.num===6||h.num===8)&&TERRAIN_RES[h.terrain]) bonus+=X_OPEN_HOT_BONUS; }
+  return bonus;
+}
 function xSetupSettlement(G,B,pi){
   const spots=legalSettleSpots(G,B,pi,true), prod=xProd(G,B,pi);
   const second = G.phase==='setup2';
   let best=null,bs=-1e9;
   for(const v of spots){
-    let s=xVertexValue(G,B,v,pi,prod);
+    let s=xVertexValue(G,B,v,pi,prod)+xOpenBonus(G,B,v,prod);
     if(second){
       /* the second settlement also pays out at once: wood and brick start the expansion */
       for(const hid of B.verts[v].hexes){ const h=B.hexById[hid]; const r=h&&TERRAIN_RES[h.terrain];
         if(r==='wood'||r==='brick') s+=0.5; }
     } else {
-      /* the first pick should leave a good partner for the second one */
+      /* the first pick should leave good partners for the second one — several, since the others
+         will take some of them before our turn comes again */
       const trial={...prod}; for(const hid of B.verts[v].hexes){ const h=B.hexById[hid]; const r=h&&TERRAIN_RES[h.terrain]; if(r&&trial[r]!=null) trial[r]+=PIP(h.num); }
-      let partner=0;
+      const partners=[];
       for(const u of spots){ if(u===v || B.verts[v].adj.indexOf(u)>=0) continue;
-        partner=Math.max(partner,xVertexValue(G,B,u,pi,trial)); }
-      s+=partner*0.3;
+        partners.push(xVertexValue(G,B,u,pi,trial)+xOpenBonus(G,B,u,trial)); }
+      partners.sort((a,b)=>b-a);
+      const top=partners.slice(0,3); const avg=top.length?top.reduce((a,x)=>a+x,0)/top.length:0;
+      s+=avg*0.45;
     }
     if(s>bs){ bs=s; best=v; }
   }

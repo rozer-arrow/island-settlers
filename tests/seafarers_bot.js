@@ -69,13 +69,14 @@ async function startGame(levels){
   G.turn=0; G.sub='robber'; G.robberReturn='main'; G.roads={}; G.buildings=G.buildings||{};
   G.players.forEach((p,i)=>{ p.res={wood:2,brick:2,sheep:2,wheat:2,ore:2}; });
   const lvl=d.BOT_LEVELS[2];
-  const quiet=B.sea.find(h=>d.hexEdgeIds(B,h.id).length===6 && h.id!==G.pirate);
   /* three ships of player 1 around one sea hex */
-  const target=B.sea.find(h=>h.id!==G.pirate && d.hexEdgeIds(B,h.id).length===6 && h.id!==quiet.id);
+  const target=B.sea.find(h=>h.id!==G.pirate && d.hexEdgeIds(B,h.id).length===6);
   d.hexEdgeIds(B,target.id).slice(0,3).forEach(eid=>{ G.roads[eid]={p:1,ship:true,born:-1}; });
+  /* a quiet sea hex: none of its edges holds a ship (it must not share an edge with the hex above) */
+  const quiet=B.sea.find(h=>h.id!==G.pirate && h.id!==target.id && d.hexEdgeIds(B,h.id).length===6 && !d.hexEdgeIds(B,h.id).some(e=>G.roads[e]));
   const before=G.pirate, robberBefore=G.robber;
   ok(d.seaPirateScore(G,B,target.id,0,lvl,false)>0,'the hex with three enemy ships scores above zero for the pirate');
-  ok(!(d.seaPirateScore(G,B,quiet.id,0,lvl,false)>0),'an empty sea hex scores zero or less');
+  ok(!!quiet && !(d.seaPirateScore(G,B,quiet.id,0,lvl,false)>0),'an empty sea hex scores zero or less');
   const cardsBefore=G.players[0].res.wood+G.players[0].res.brick+G.players[0].res.sheep+G.players[0].res.wheat+G.players[0].res.ore;
   ok(d.botTryPirate(G,B,0,lvl,1e9,false)===false && G.pirate===before,'when the robber is far better, the pirate stays put');
   const moved=d.botTryPirate(G,B,0,lvl,-1,false);
