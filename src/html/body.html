@@ -1,0 +1,172 @@
+<body>
+<div class="app">
+
+<!-- ================= HOME ================= -->
+<section id="home">
+  <div class="langsw" id="langSw" dir="ltr"><button data-l="he">עברית</button><button data-l="en">English</button></div>
+ <div class="home-wrap">
+  <div class="hero">
+    <canvas id="heroCanvas" aria-hidden="true"></canvas>
+    <h1>אי המתיישבים</h1>
+    <p>משחק בנייה ומסחר על אי משושים. בונים דרכים, מיישבים צמתים, סוחרים במשאבים — הראשון ל‑10 נקודות מנצח.</p>
+  </div>
+
+  <div class="card">
+    <h2>איך משחקים</h2>
+    <div class="seg" id="modeSeg" role="group">
+      <button data-mode="local" aria-pressed="true">על מכשיר אחד</button>
+      <button data-mode="online" aria-pressed="false">עם חברים מרחוק</button>
+    </div>
+
+    <div id="localPane" style="margin-top:14px">
+      <div class="sub">כולם מסביב לאותו מסך. מעבירים את הטלפון בתור.</div>
+      <div class="seg" id="countSeg" role="group" style="margin-bottom:10px">
+        <button data-n="2">2 שחקנים</button>
+        <button data-n="3" aria-pressed="true">3</button>
+        <button data-n="4">4</button>
+        <button data-n="5">5</button>
+        <button data-n="6">6</button>
+      </div>
+      <div class="players-grid" id="playersGrid"></div>
+      <button class="btn gold wide" id="startLocal" style="margin-top:14px">פתיחת לוח חדש</button>
+    </div>
+
+    <div id="onlinePane" class="hidden" style="margin-top:14px">
+      <div class="sub">פותחים חדר, שולחים את הקישור, וכולם משחקים מהמכשיר שלהם. הלוח מסונכרן לכולם בזמן אמת.</div>
+      <div class="prow" style="margin-bottom:10px">
+        <div class="swatch" id="myColor"></div>
+        <input id="myName" maxlength="14" placeholder="השם שלך">
+      </div>
+      <button class="btn gold wide" id="createRoom">פתיחת חדר חדש</button>
+      <div style="height:10px"></div>
+      <div class="online-box">
+        <input id="joinCode" maxlength="4" placeholder="קוד" inputmode="latin" autocomplete="off">
+        <button class="btn" id="joinRoom">הצטרפות</button>
+      </div>
+      <div class="note" id="onlineNote"></div>
+    </div>
+
+    <div class="sub" style="margin-top:16px">נקודות לניצחון</div>
+    <div class="seg" id="targetSeg" role="group">
+      <button data-t="10" aria-pressed="true">10 נקודות</button>
+      <button data-t="12">12 נקודות</button>
+    </div>
+    <div class="note" id="targetNote">ערים ואבירים תמיד ל‑13, וימאים לפחות 12. במשחק עם חברים, 12 נקודות רק אם כולם מסכימים.</div>
+  </div>
+
+  <div class="card">
+    <h2>הרחבות וּוריאנטים</h2>
+    <div class="sub">אפשר לשחק את המשחק הבסיסי כמו שהוא, או להוסיף שכבות. לחיצה על <b>?</b> פותחת הסבר מלא.</div>
+    <div class="exp-list" id="expList"></div>
+  </div>
+
+  <div class="card">
+    <h2>חוקי הבסיס בקצרה</h2>
+    <div class="exp-list">
+      <div class="exp" data-open="0" id="rulesExp">
+        <div class="exp-head" data-toggle="rulesExp">
+          <div class="t"><b>תקציר חוקים</b><span>הכל מה שצריך כדי להתחיל תוך דקה</span></div>
+          <button class="info">?</button>
+        </div>
+        <div class="exp-body"><div class="inner">
+          <ul>
+            <li><b>הכנה:</b> כל שחקן מניח יישוב ודרך, ואז בסדר הפוך יישוב ודרך נוספים. מהיישוב השני מקבלים משאבים מהמשושים הסמוכים.</li>
+            <li><b>תור:</b> מטילים שתי קוביות. כל משושה שמספרו יצא מפיק משאב לכל יישוב (1) ועיר (2) שנוגעים בו.</li>
+            <li><b>7:</b> מי שמחזיק יותר מ‑7 קלפים משליך חצי. מזיזים את השודד וגונבים קלף משכן.</li>
+            <li><b>בנייה:</b> דרך = עץ+לבנה · יישוב = עץ+לבנה+צמר+חיטה · עיר = 2 חיטה+3 אבן · קלף פיתוח = צמר+חיטה+אבן.</li>
+            <li><b>מרחק:</b> אסור להניח יישוב בצומת שצמוד ליישוב אחר.</li>
+            <li><b>מסחר:</b> 4:1 מול הבנק, 3:1 או 2:1 בנמל שלכם, וכל יחס מוסכם מול שחקן אחר.</li>
+            <li><b>בונוסים:</b> הדרך הארוכה (5+ רצופות) ו‑צבא גדול (3+ אבירים) שווים 2 נקודות כל אחד.</li>
+            <li><b>ניצחון:</b> 10 נקודות בתורכם.</li>
+          </ul>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note" style="text-align:center;max-width:50ch;margin:18px auto 0">
+    מימוש עצמאי בהשראת משחקי בנייה על לוח משושים. כל האיורים מצוירים בקוד במיוחד למשחק הזה.
+  </div>
+ </div>
+</section>
+
+<!-- ================= GAME ================= -->
+<section id="game" class="hidden">
+  <div id="boardWrap">
+    <canvas id="board"></canvas>
+
+    <div class="topbar">
+      <button class="icon-btn" id="btnMenu" aria-label="תפריט">
+        <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><path d="M1 1h16M1 7h16M1 13h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="turn-pill">
+        <span class="dot" id="turnDot"></span>
+        <span class="txt"><b id="turnName">—</b><small id="turnHint">—</small></span>
+        <span class="chip" id="lastRoll" style="display:none"></span>
+        <span class="chip" id="roomChip" style="display:none"></span>
+      </div>
+      <button class="icon-btn" id="btnDesk" aria-label="מצב דסקטופ" title="מצב דסקטופ">
+        <svg width="20" height="18" viewBox="0 0 20 18" fill="none"><rect x="1.5" y="2" width="17" height="11" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M7 16.5h6M10 13v3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+      <button class="icon-btn" id="btnSound" aria-label="צליל"></button>
+      <button class="icon-btn" id="btnLog" aria-label="יומן">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 3h12v12H3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 7h6M6 10h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="pstrip" id="pstrip"></div>
+    <div class="seat" id="seatTop"></div>
+    <div class="seat" id="seatLeft"></div>
+    <div class="seat" id="seatRight"></div>
+    <div class="barb" id="barbMeter" style="display:none"></div>
+    <div class="coach hidden" id="coach"></div>
+    <div id="diceLayer"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <div class="dock">
+    <div class="seatself" id="seatSelf"></div>
+    <div class="hchips" id="hchips"></div>
+    <div class="hand" id="hand"></div>
+    <div class="actrow">
+      <button class="primary hidden" id="primaryBtn" data-act=""></button>
+      <div class="actions" id="actions"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SHEETS ================= -->
+<div class="scrim" id="scrim"></div>
+
+<div class="sheet" id="sheetInfo"><div class="grab"></div>
+  <h3 id="infoTitle"></h3><div id="infoBody" class="exp-body" style="max-height:none"></div>
+  <button class="btn wide" style="margin-top:14px" data-close>סגירה</button>
+</div>
+
+<div class="sheet" id="sheetLog"><div class="grab"></div>
+  <h3>יומן המשחק</h3><div class="logbox" id="logbox"></div>
+  <button class="btn wide" style="margin-top:14px" data-close>סגירה</button>
+</div>
+
+<div class="sheet" id="sheetMenu"><div class="grab"></div>
+  <h3>תפריט</h3>
+  <div id="menuBody" style="display:flex;flex-direction:column;gap:8px"></div>
+</div>
+
+<div class="sheet" id="sheetTrade"><div class="grab"></div>
+  <h3>מסחר</h3><p class="sub" id="tradeSub"></p>
+  <div id="tradeBody"></div>
+</div>
+
+<div class="sheet" id="sheetDev"><div class="grab"></div>
+  <h3>קלפי פיתוח</h3><p class="sub" id="devSub"></p>
+  <div class="devlist" id="devBody"></div>
+  <button class="btn wide" style="margin-top:14px" data-close>סגירה</button>
+</div>
+
+<div class="sheet" id="sheetPick"><div class="grab"></div>
+  <h3 id="pickTitle"></h3><p class="sub" id="pickSub"></p>
+  <div id="pickBody"></div>
+</div>
+
+</div>

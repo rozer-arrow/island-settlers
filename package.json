@@ -4,7 +4,8 @@
   "private": true,
   "description": "אי המתיישבים — משחק בנייה ומסחר על אי משושים",
   "scripts": {
-    "check": "bash tools/check.sh",
+    "build": "node tools/build.js",
+    "check": "node tools/build.js --check && bash tools/check.sh",
     "test": "node tests/ui_human.js && node tests/net2.js && node tests/knightrob.js"
   },
   "devDependencies": {

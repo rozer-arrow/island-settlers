@@ -1,0 +1,55 @@
+{
+  "output": "island.html",
+  "parts": [
+    "src/html/head.html",
+    {
+      "text": "<style id=\"embeddedFonts\">\n"
+    },
+    "src/styles/fonts.css",
+    {
+      "text": "</style>\n<style>\n"
+    },
+    "src/styles/game.css",
+    {
+      "text": "</style>\n</head>\n"
+    },
+    "src/html/body.html",
+    {
+      "text": "<script>\n(function(){\n'use strict';\n"
+    },
+    "src/js/rules/utilities.js",
+    "src/js/rules/content.js",
+    "src/js/rules/board.js",
+    "src/js/ui/sound.js",
+    "src/js/rules/engine-core.js",
+    "src/js/expansions/seafarers-ships.js",
+    "src/js/rules/engine-actions.js",
+    "src/js/expansions/cities-knights.js",
+    "src/js/expansions/cities-knights-cards.js",
+    "src/js/expansions/harbourmaster-events.js",
+    "src/js/art/tiles-and-icons.js",
+    "src/js/art/living-board.js",
+    "src/js/art/sky.js",
+    "src/js/art/pieces-and-loop.js",
+    "src/js/art/frame.js",
+    "src/js/translation/i18n-setup.js",
+    "src/js/translation/i18n-pairs.js",
+    "src/js/translation/i18n-engine.js",
+    "src/js/computer/bots.js",
+    "src/js/computer/expert.js",
+    "src/js/ui/app-state.js",
+    "src/js/ui/hud.js",
+    "src/js/ui/sheets.js",
+    "src/js/ui/trade-with-players.js",
+    "src/js/expansions/cities-knights-ui.js",
+    "src/js/ui/tutorial.js",
+    "src/js/ui/first-roll.js",
+    "src/js/ui/home.js",
+    "src/js/network/online-rooms.js",
+    "src/js/ui/home-hero.js",
+    "src/js/boot.js",
+    {
+      "text": "})();\n</script>\n</body>\n</html>\n"
+    }
+  ]
+}
