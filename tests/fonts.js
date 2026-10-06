@@ -9,6 +9,6 @@ const {chromium}=require('playwright');
     heebo:document.fonts.check('700 16px Heebo','שלום'), frank:document.fonts.check('900 30px "Frank Ruhl Libre"','אי המתיישבים'),
     loaded:[...document.fonts].filter(f=>f.status==='loaded').map(f=>f.family+' '+f.weight) }; });
   console.log(JSON.stringify(r)); console.log('network requests:',net.length,net.slice(0,3)); console.log('errors:',errs);
-  await pg.screenshot({path:'/tmp/claude-0/-home-claude/b03bdf0a-3474-5dc1-91ff-bdeaef3aac55/scratchpad/home_offline.png'});
+  await pg.screenshot({path:require('path').join(require('os').tmpdir(),'home_offline.png')});
   await b.close();
 })();
