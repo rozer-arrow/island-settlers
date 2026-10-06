@@ -326,7 +326,12 @@ function xAct(G,B,nd,pi,p,lvl){
       toast(p.name+' השליך '+dn+' קלפים',1600); afterAction(); return true;
     }
     case 'robber': {
-      const hid=xBestRobberHex(G,B,pi); if(hid==null) return false;
+      const hid=xBestRobberHex(G,B,pi);
+      if(G.cfg.seafarers){                                   /* the pirate may take the robber's place */
+        const land = hid==null ? -1e9 : xRobberHexScore(G,B,pi,hid,true)+(robberHitsMe(G,B,pi)?4:0);
+        if(botTryPirate(G,B,pi,lvl,land,true)){ afterAction(); return true; }
+      }
+      if(hid==null) return false;
       const h=B.hexById[G.robber]; robberAnim={from:toScreen(h.x,h.y),t0:T,t1:T+0.55};
       const targets=robberTargets(G,B,hid,pi);
       moveRobber(G,B,hid,targets.length?xVictim(G,targets,pi):null); SFX.robber();

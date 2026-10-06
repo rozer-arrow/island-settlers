@@ -36,6 +36,7 @@
     "src/js/translation/i18n-pairs.js",
     "src/js/translation/i18n-engine.js",
     "src/js/computer/bots.js",
+    "src/js/computer/bots-seafarers.js",
     "src/js/computer/expert.js",
     "src/js/ui/app-state.js",
     "src/js/ui/hud.js",

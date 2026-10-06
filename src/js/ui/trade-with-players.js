@@ -213,7 +213,11 @@ function openMenu(){
   const ecoLabel=()=>ECO?'מצב חסכוני: פועל':'מצב חסכוני: כבוי';
   const ecoBtn=mk(ecoLabel(),()=>{ setEco(!ECO); ecoBtn.textContent=ecoLabel(); toast(ECO?'מצב חסכוני פועל — פחות אנימציה, פחות סוללה':'מצב חסכוני כבוי'); });
   mk('מרכוז הלוח',()=>{ fitNow(); closeAllSheets(); });
-  mk('חוקי המשחק',()=>{ showInfo('תקציר חוקים', $('#rulesExp .inner').innerHTML); });
+  mk('חוקי המשחק',()=>{
+    /* no demo-game button here: starting one in the middle of a real game would throw that game away */
+    const c=$('#rulesExp .inner').cloneNode(true);
+    c.querySelectorAll('[data-starttut]').forEach(x=>x.remove());
+    showInfo('תקציר חוקים', c.innerHTML); });
   mk('יציאה לתפריט הראשי',()=>{
     askConfirm('לצאת מהמשחק?', ST.mode==='online'?'תוכלו לחזור לחדר דרך אותו קישור.':'המצב המקומי לא יישמר.','כן, לצאת',()=>leaveGame());
   },'danger');

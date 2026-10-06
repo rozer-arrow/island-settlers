@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node tools/build.js",
     "check": "node tools/build.js --check && bash tools/check.sh",
-    "test": "node tests/ui_human.js && node tests/net2.js && node tests/knightrob.js"
+    "test": "node tests/ui_human.js && node tests/net2.js && node tests/knightrob.js && node tests/seafarers_bot.js && node tests/tutorial_base.js"
   },
   "devDependencies": {
     "jsdom": "^24.1.3",

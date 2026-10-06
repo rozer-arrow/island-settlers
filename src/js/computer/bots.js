@@ -174,6 +174,10 @@ function botAct(){
     }
     case 'robber': {
       const legal=B.hexes.filter(h=>canPlaceRobber(G,B,h.id,pi)).map(h=>h.id);
+      if(G.cfg.seafarers){                                   /* the pirate may take the robber's place */
+        const landBest=legal.length?Math.max(...legal.map(id=>robberScore(G,B,id,pi,lvl))):-1e9;
+        if(botTryPirate(G,B,pi,lvl,landBest+(robberHitsMe(G,B,pi)?5:0),false)) return afterAction();
+      }
       const hid=bestOf(legal,id=>robberScore(G,B,id,pi,lvl),lvl);
       const h=B.hexById[G.robber];
       robberAnim={from:toScreen(h.x,h.y),t0:T,t1:T+0.55};
@@ -346,6 +350,8 @@ function botMain(G,B,pi,lvl,special){
       if(c==='mono' && lvl.look>1 && Math.random()<0.5){ playDev(G,B,i); SFX.monoCard(); return afterAction(); }
     }
   }
+  /* 1b. Seafarers: a free ship move, before building, since it may open a new place to settle */
+  if(!special && botMoveShip(G,B,pi,lvl)) return afterAction();
   /* 2. build, best first */
   const cities=legalCitySpots(G,B,pi);
   if(cities.length && canAfford(p,COST.city)){

@@ -595,6 +595,7 @@ body.en .gchip,body.en #myGenderBtn{display:none}
             <li><b>בונוסים:</b> הדרך הארוכה (5+ רצופות) ו‑צבא גדול (3+ אבירים) שווים 2 נקודות כל אחד.</li>
             <li><b>ניצחון:</b> 10 נקודות בתורכם.</li>
           </ul>
+          <button class="btn gold sm" data-starttut="base" style="margin-top:8px">🎓 נסו משחק דמה — חוקי הבסיס</button>
         </div></div>
       </div>
     </div>
@@ -799,7 +800,7 @@ const EXPANSIONS = [
           <p>בונים <b>ספינות</b> (עץ + צמר) על קשתות בקצה המים. ספינה מתחברת לספינה ודרך לדרך, ומעבר בין דרך לספינה אפשרי רק ביישוב או בעיר. הן נספרות יחד ב\"דרך הארוכה\". יישוב ראשון על אי חדש שווה <b>2 נקודות</b>, ושדות זהב מפוזרים באיים.</p>
           <p><b>הזזת ספינה:</b> פעם בתור אפשר להזיז בחינם ספינה \"פתוחה\" — בקצה השרשרת, ושלא נבנתה באותו תור.</p>
           <p><b>שודדי הים:</b> כשיוצא 7 (או משחקים אביר) מזיזים או את השודד ביבשה או את שודדי הים בים. שודדי הים סוגרים את המשושה שלהם: אי אפשר לבנות או להזיז שם ספינות, ואפשר לגנוב קלף מבעל ספינה בסמוך.</p>
-          <p class=\"note\" style=\"color:#E0A93B\">שחקני מחשב בונים ספינות, אבל לא מזיזים אותן ולא משתמשים בשודדי הים (הם כן כפופים להם).</p>`},
+          <p class=\"note\" style=\"color:#E0A93B\">שחקני מחשב בונים ספינות ומזיזים ספינה פתוחה למקום טוב יותר (פעם בתור, מרמת \"רגיל\" ומעלה). כשיוצא 7 הם גם משתמשים בשודדי הים, אם זה פוגע ביריב יותר מהשודד ביבשה — לפי אותם כללים בדיוק.</p>`},
   { id:'ck', tut:'ck', name:'ערים ואבירים', sub:'סחורות, שלושה מסלולי שיפור, אבירים וברברים · 13 נקודות', playable:true, default:false,
     body:`<p>ההרחבה העמוקה ביותר, והיא משנה כמעט הכל. קלפי הפיתוח והצבא הגדול יוצאים מהמשחק; במקומם:</p>
           <ul>
@@ -4389,8 +4390,6 @@ const I18N_PAIRS=[["אי המתיישבים",
 "Pirates:"],
 ["כשיוצא 7 (או משחקים אביר) מזיזים או את השודד ביבשה או את שודדי הים בים. שודדי הים סוגרים את המשושה שלהם: אי אפשר לבנות או להזיז שם ספינות, ואפשר לגנוב קלף מבעל ספינה בסמוך.",
 "When a 7 is rolled (or a knight is played) you move either the robber on land or the pirates at sea. Pirates close their hex: you can't build or move ships there, and you can steal a card from a ship owner nearby."],
-["שחקני מחשב בונים ספינות, אבל לא מזיזים אותן ולא משתמשים בשודדי הים (הם כן כפופים להם).",
-"Computer players build ships, but don't move them and don't use the pirates (they are still affected by them)."],
 ["ערים ואבירים",
 "Cities & Knights"],
 ["סחורות, שלושה מסלולי שיפור, אבירים וברברים · 13 נקודות",
@@ -5359,8 +5358,6 @@ const I18N_PAIRS=[["אי המתיישבים",
 "Choose a marked sea hex (here it touches your ship, so it would be blocking you). A hex on land moves the regular robber."],
 ["כל הכבוד! 🎉",
 "Well done! 🎉"],
-["למדתם: ספינות ושרשראות, יישוב על אי חדש (+2 נקודות), הזזת ספינה פתוחה ושודדי ים. בכל משחק המפה נוצרת מחדש, ולכן כל אי והמרחקים ביניהם שונים. הניצחון בימאים הוא ב־12 נקודות.",
-"You learned: ships and chains, settling a new island (+2 points), moving an open ship and pirates. The map is generated anew every game, so every island and the distances between them are different. Victory in Seafarers is at 12 points."],
 ["שדות זהב.",
 "Gold fields."],
 ["משבצת זהב מניבה",
@@ -5608,7 +5605,75 @@ const I18N_PAIRS=[["אי המתיישבים",
 ["מצב חסכוני פועל — פחות אנימציה, פחות סוללה",
 "Battery saver on — less animation, less battery"],
 ["מצב חסכוני כבוי",
-"Battery saver off"]];
+"Battery saver off"],
+["שחקני מחשב בונים ספינות ומזיזים ספינה פתוחה למקום טוב יותר (פעם בתור, מרמת \"רגיל\" ומעלה). כשיוצא 7 הם גם משתמשים בשודדי הים, אם זה פוגע ביריב יותר מהשודד ביבשה — לפי אותם כללים בדיוק.",
+"Computer players build ships and move an open ship to a better spot (once a turn, from the \"Normal\" level up). When a 7 is rolled they also use the pirates, if that hurts an opponent more than the land robber — by exactly the same rules."],
+["למדתם: ספינות ושרשראות, יישוב על אי חדש (+2 נקודות), הזזת ספינה פתוחה ושודדי ים. בכל משחק המפה נוצרת מחדש, ולכן כל אי והמרחקים ביניהם שונים. הניצחון בימאים הוא ב־12 נקודות. גם שחקני המחשב מזיזים ספינות ומשתמשים בשודדי הים, לפי אותם כללים.",
+"You learned: ships and chains, settling a new island (+2 points), moving an open ship and pirates. The map is generated anew every game, so every island and the distances between them are different. Victory in Seafarers is at 12 points. Computer players also move ships and use the pirates, by the same rules."],
+["🎓 נסו משחק דמה — חוקי הבסיס",
+"🎓 Try a practice game — the basic rules"],
+["חוקי הבסיס",
+"Basic rules"],
+["למשחק אמיתי",
+"To a real game"],
+["בחרו שחקנים והתחילו",
+"Choose players and start"],
+["ברוכים הבאים למשחק דמה!",
+"Welcome to the practice game!"],
+["שני שחקנים, שום דבר כאן לא נספר, ואפשר לנסות הכול. אתם האדומים. נעבור על חוקי הבסיס צעד אחרי צעד: קוביות, בנייה, מסחר, שודד וניצחון.",
+"Two players, nothing here counts, and you can try everything. You are red. We'll go through the basic rules step by step: dice, building, trading, the robber and winning."],
+["כל משושה שהמספר שלו יצא מפיק משאב לכל יישוב שנוגע בו (עיר מפיקה 2). הפעם המספר יצא על משושה שליד היישוב שלכם — הוא מסומן.",
+"Every hex whose number is rolled produces one resource for each settlement touching it (a city produces 2). This time the number landed on a hex next to your settlement — it is marked."],
+["קיבלתם משאב!",
+"You got a resource!"],
+["יש חמישה סוגים: עץ, לבנה, צמר, חיטה ואבן. הם ביד שלכם, למטה. עכשיו אפשר לבנות — העלות מופיעה על כל כפתור.",
+"There are five kinds: wood, brick, wool, wheat and ore. They are in your hand, below. Now you can build — the cost is shown on every button."],
+["דרך.",
+"Road."],
+["עולה עץ + לבנה. לחצו",
+"Costs wood + brick. Tap"],
+["\"דרך\"",
+"\"Road\""],
+["והניחו אותה על הקשת המסומנת. דרכים מחברות את היישובים שלכם ומובילות למקומות חדשים.",
+"and place it on the marked edge. Roads connect your settlements and lead to new places."],
+["יישוב.",
+"Settlement."],
+["עולה עץ + לבנה + צמר + חיטה. לחצו",
+"Costs wood + brick + wool + wheat. Tap"],
+["והניחו אותו בצומת המסומן — הוא שווה נקודה ומפיק משאבים. אסור ליישב בצומת שצמוד ליישוב אחר (חוק המרחק).",
+"and place it on the marked corner — it is worth a point and produces resources. You may not settle a corner next to another settlement (the distance rule)."],
+["עיר.",
+"City."],
+["אפשר לשדרג יישוב לעיר: 2 חיטה + 3 אבן. עיר שווה 2 נקודות ומפיקה כפול.",
+"You can upgrade a settlement to a city: 2 wheat + 3 ore. A city is worth 2 points and produces double."],
+["קלף פיתוח.",
+"Development card."],
+["עולה צמר + חיטה + אבן. יש בו אביר (מזיז את השודד), בניית דרכים, שנת שפע, מונופול או נקודת ניצחון חסויה.",
+"Costs wool + wheat + ore. It can be a knight (moves the robber), road building, year of plenty, monopoly or a hidden victory point."],
+["מסחר.",
+"Trading."],
+["מול הבנק: 4 קלפים מאותו סוג תמורת קלף אחד לבחירתכם, ובנמל 3:1 או 2:1. אפשר גם לסחור עם שחקנים בכל יחס שתסכימו עליו.",
+"With the bank: 4 cards of one kind for one card of your choice, and 3:1 or 2:1 at a port. You can also trade with players at any rate you agree on."],
+["שודד.",
+"The robber."],
+["כשיוצא 7, מי שמחזיק יותר מ‑7 קלפים משליך חצי מהם. אחר כך מזיזים את השודד למשושה אחר — הוא חוסם אותו (אין הפקה) — וגונבים קלף משכן. בואו ננסה.",
+"When a 7 is rolled, anyone holding more than 7 cards discards half of them. Then you move the robber to another hex — it blocks it (no production) — and steal a card from a neighbor. Let's try."],
+["הציבו את השודד.",
+"Place the robber."],
+["בחרו את המשושה המסומן, שליד היישוב של שחקן הדמה, ואז בחרו קלף הפוך מהיד שלו כדי לגנוב אותו.",
+"Choose the marked hex, next to the practice player's settlement, then pick a face-down card from their hand to steal it."],
+["לחצו על הכפתור הזהב. בכל תור מטילים קוביות, בונים וסוחרים, ואז מסיימים. שחקן הדמה ידלג מיד.",
+"Tap the gold button. Every turn you roll the dice, build and trade, then finish. The practice player will skip right away."],
+["עוד שני בונוסים:",
+"Two more bonuses:"],
+["הדרך הארוכה",
+"Longest Road"],
+["(5 דרכים רצופות ויותר) ו",
+"(5 or more roads in a row) and"],
+["צבא גדול",
+"Largest Army"],
+["(3 אבירים או יותר) — כל אחד שווה 2 נקודות. מי שמגיע ל‑10 נקודות בתורו מנצח. בהצלחה!",
+"(3 or more knights) — each is worth 2 points. Whoever reaches 10 points on their turn wins. Good luck!"]];
 
 const I18N=(function(){
   const exact=new Map(), pats=[], frags=[];
@@ -5901,6 +5966,10 @@ function botAct(){
     }
     case 'robber': {
       const legal=B.hexes.filter(h=>canPlaceRobber(G,B,h.id,pi)).map(h=>h.id);
+      if(G.cfg.seafarers){                                   /* the pirate may take the robber's place */
+        const landBest=legal.length?Math.max(...legal.map(id=>robberScore(G,B,id,pi,lvl))):-1e9;
+        if(botTryPirate(G,B,pi,lvl,landBest+(robberHitsMe(G,B,pi)?5:0),false)) return afterAction();
+      }
       const hid=bestOf(legal,id=>robberScore(G,B,id,pi,lvl),lvl);
       const h=B.hexById[G.robber];
       robberAnim={from:toScreen(h.x,h.y),t0:T,t1:T+0.55};
@@ -6073,6 +6142,8 @@ function botMain(G,B,pi,lvl,special){
       if(c==='mono' && lvl.look>1 && Math.random()<0.5){ playDev(G,B,i); SFX.monoCard(); return afterAction(); }
     }
   }
+  /* 1b. Seafarers: a free ship move, before building, since it may open a new place to settle */
+  if(!special && botMoveShip(G,B,pi,lvl)) return afterAction();
   /* 2. build, best first */
   const cities=legalCitySpots(G,B,pi);
   if(cities.length && canAfford(p,COST.city)){
@@ -6110,6 +6181,77 @@ function botMain(G,B,pi,lvl,special){
   if(checkWin(G)){ SFX.win(); return afterAction(); }
   endTurn(G,B); ST.place=null;
   return afterAction();
+}
+
+/* =========================================================
+   SEAFARERS — how the computer uses the pirate and moves its ships
+   (the rules themselves are in expansions/seafarers-ships.js)
+   ========================================================= */
+
+/* how much a pirate parked on this sea hex hurts the others (and us), plus the card we would take.
+   Same idea as the robber scores: `expert` weighs the others by how dangerous they are. */
+function seaPirateScore(G,B,hid,pi,lvl,expert){
+  const lead=Math.max(...G.players.map((x,i)=>vpPublic(G,i)));
+  let s=0, mine=0, steal=0;
+  for(const eid of hexEdgeIds(B,hid)){
+    const r=G.roads[eid]; if(!r||!r.ship) continue;
+    if(r.p===pi){ mine+=3.2; continue; }                 /* it would block our own ships too */
+    let w=3;
+    if(expert) w*=xThreat(G,pi,r.p);
+    else if(lvl.block>0 && vpPublic(G,r.p)>=lead-1) w*=(1+lvl.block);
+    s+=w;
+    const cards=totalCards(G.players[r.p]);
+    if(cards>0 && !(G.cfg.friendly && vpPublic(G,r.p)<=2))
+      steal=Math.max(steal, expert ? Math.min(cards,9)*0.35*xThreat(G,pi,r.p) : 1.5);
+  }
+  return s-mine+steal;
+}
+
+/* On a 7 or a knight the robber must move — in Seafarers the pirate may move instead.
+   `landValue` is how good the best robber spot is, in the same units. Returns true when the
+   computer parked the pirate (the turn state has moved on), false to go on with the robber. */
+function botTryPirate(G,B,pi,lvl,landValue,expert){
+  if(!G.cfg.seafarers || !G.pirate || !B.sea) return false;
+  const legal=B.sea.filter(h=>canPlacePirate(G,B,h.id,pi)).map(h=>h.id);
+  if(!legal.length) return false;
+  const hid=bestOf(legal,id=>seaPirateScore(G,B,id,pi,lvl,expert)+Math.random()*0.3,lvl);
+  const sc=seaPirateScore(G,B,hid,pi,lvl,expert);
+  if(!(sc>0) || !(sc>landValue)) return false;           /* an empty sea is never worth it */
+  const targets=pirateTargets(G,B,hid,pi);
+  let victim=null;
+  if(targets.length) victim = expert ? xVictim(G,targets,pi)
+    : targets.sort((a,b)=>(vpPublic(G,b)-vpPublic(G,a))||(totalCards(G.players[b])-totalCards(G.players[a])))[0];
+  movePirate(G,B,hid,victim); SFX.robber();
+  return true;
+}
+
+/* how promising a ship spot is: the settlements it could reach (no randomness, so spots compare fairly) */
+function shipSpotValue(G,B,eid,pi,lvl){
+  const e=B.edges[eid]; let s=0;
+  for(const v of e.v){
+    if(canSettle(G,B,v,pi,true)) s+=vertexScore(G,B,v,pi,lvl)*0.8;
+    for(const a of B.verts[v].adj) if(!G.buildings[a]&&canSettle(G,B,a,pi,true))
+      s+=vertexScore(G,B,a,pi,lvl)*0.25;
+  }
+  return s;
+}
+
+/* Moving a ship is free, once a turn, and only for an "open" ship (one end dangling). Do it when
+   the ship's best new spot is clearly better than where it sits now. Returns true when it moved. */
+function botMoveShip(G,B,pi,lvl){
+  if(!G.cfg.seafarers || lvl.look<1) return false;        /* the beginner leaves its ships alone */
+  const movable=movableShips(G,B,pi); if(!movable.length) return false;
+  let best=null, bestGain=1.5;                            /* "clearly" better, so ships do not shuffle for nothing */
+  for(const from of movable){
+    const here=shipSpotValue(G,B,from,pi,lvl);
+    for(const to of shipDestinations(G,B,from,pi)){
+      const gain=shipSpotValue(G,B,to,pi,lvl)-here;
+      if(gain>bestGain){ bestGain=gain; best={from,to}; }
+    }
+  }
+  if(!best || !moveShip(G,B,best.from,best.to)) return false;
+  spawnBurst(B.edges[best.to].x,B.edges[best.to].y,colOf(G,pi).hex,12); SFX.build('ship');
+  return true;
 }
 
 /* =========================================================
@@ -6440,7 +6582,12 @@ function xAct(G,B,nd,pi,p,lvl){
       toast(p.name+' השליך '+dn+' קלפים',1600); afterAction(); return true;
     }
     case 'robber': {
-      const hid=xBestRobberHex(G,B,pi); if(hid==null) return false;
+      const hid=xBestRobberHex(G,B,pi);
+      if(G.cfg.seafarers){                                   /* the pirate may take the robber's place */
+        const land = hid==null ? -1e9 : xRobberHexScore(G,B,pi,hid,true)+(robberHitsMe(G,B,pi)?4:0);
+        if(botTryPirate(G,B,pi,lvl,land,true)){ afterAction(); return true; }
+      }
+      if(hid==null) return false;
       const h=B.hexById[G.robber]; robberAnim={from:toScreen(h.x,h.y),t0:T,t1:T+0.55};
       const targets=robberTargets(G,B,hid,pi);
       moveRobber(G,B,hid,targets.length?xVictim(G,targets,pi):null); SFX.robber();
@@ -8195,7 +8342,11 @@ function openMenu(){
   const ecoLabel=()=>ECO?'מצב חסכוני: פועל':'מצב חסכוני: כבוי';
   const ecoBtn=mk(ecoLabel(),()=>{ setEco(!ECO); ecoBtn.textContent=ecoLabel(); toast(ECO?'מצב חסכוני פועל — פחות אנימציה, פחות סוללה':'מצב חסכוני כבוי'); });
   mk('מרכוז הלוח',()=>{ fitNow(); closeAllSheets(); });
-  mk('חוקי המשחק',()=>{ showInfo('תקציר חוקים', $('#rulesExp .inner').innerHTML); });
+  mk('חוקי המשחק',()=>{
+    /* no demo-game button here: starting one in the middle of a real game would throw that game away */
+    const c=$('#rulesExp .inner').cloneNode(true);
+    c.querySelectorAll('[data-starttut]').forEach(x=>x.remove());
+    showInfo('תקציר חוקים', c.innerHTML); });
   mk('יציאה לתפריט הראשי',()=>{
     askConfirm('לצאת מהמשחק?', ST.mode==='online'?'תוכלו לחזור לחדר דרך אותו קישור.':'המצב המקומי לא יישמר.','כן, לצאת',()=>leaveGame());
   },'danger');
@@ -8666,6 +8817,65 @@ function seaPlan(G,B){
 
 const TUTS = {};
 
+/* ---------------- The basics (no expansion) ---------------- */
+TUTS.base = {
+  id:'base', exp:null, title:'חוקי הבסיס', seed:7,
+  cfg:{players:2, balanced:true, target:10},
+  setup(G,B,T){
+    tutSetup(G,B);
+    G.players.forEach(p=>RES.forEach(r=>p.res[r]=0));
+    /* the scripted roll lands on a number next to our own settlement */
+    const mine=Object.keys(G.buildings).filter(v=>G.buildings[v].p===0);
+    const best=bestOf(mine,v=>vertexScore(G,B,v,0,TUT_LVL),TUT_LVL);
+    const h=tutHexNear(G,B,best,['forest','hills','pasture','fields','mountains']);
+    T.data.rollHex=h?h.id:null;
+    G.forced=[tutPair(h?h.num:8)];
+    tutTop(G.players[1],{wood:1,brick:1,sheep:1,wheat:1});     /* so there is a card to steal later */
+  },
+  steps:[
+    {next:true, t:'<b>ברוכים הבאים למשחק דמה!</b> שני שחקנים, שום דבר כאן לא נספר, ואפשר לנסות הכול. אתם האדומים. נעבור על חוקי הבסיס צעד אחרי צעד: קוביות, בנייה, מסחר, שודד וניצחון.'},
+    {spot:'primary', phase:'roll', point:(G,B,T)=>T.data.rollHex?{hexes:[T.data.rollHex]}:null,
+      t:'<b>הטילו את הקוביות.</b> כל משושה שהמספר שלו יצא מפיק משאב לכל יישוב שנוגע בו (עיר מפיקה 2). הפעם המספר יצא על משושה שליד היישוב שלכם — הוא מסומן.',
+      done:G=>(G.rollId||0)>=1},
+    {next:true, t:'<b>קיבלתם משאב!</b> יש חמישה סוגים: עץ, לבנה, צמר, חיטה ואבן. הם ביד שלכם, למטה. עכשיו אפשר לבנות — העלות מופיעה על כל כפתור.'},
+    {spot:'road', t:'<b>דרך.</b> עולה עץ + לבנה. לחצו <b>"דרך"</b> והניחו אותה על הקשת המסומנת. דרכים מחברות את היישובים שלכם ומובילות למקומות חדשים.',
+      enter:(G,B,T)=>{ tutTop(G.players[0],{wood:1,brick:1});
+        const legal=legalRoadSpots(G,B,0,false);
+        T.data.road=legal.length?bestOf(legal,e=>roadScore(G,B,e,0,TUT_LVL),TUT_LVL):null; },
+      point:(G,B,T)=>(T.data.road&&!G.roads[T.data.road])?{edges:[T.data.road]}:null,
+      done:G=>Object.values(G.roads).filter(r=>r.p===0).length>=3},
+    {spot:'sett', t:'<b>יישוב.</b> עולה עץ + לבנה + צמר + חיטה. לחצו <b>"יישוב"</b> והניחו אותו בצומת המסומן — הוא שווה נקודה ומפיק משאבים. אסור ליישב בצומת שצמוד ליישוב אחר (חוק המרחק).',
+      enter:(G,B,T)=>{ tutTop(G.players[0],{wood:1,brick:1,sheep:1,wheat:1});
+        const spots=legalSettleSpots(G,B,0,false);
+        T.data.sett=spots.length?bestOf(spots,v=>vertexScore(G,B,v,0,TUT_LVL),TUT_LVL):null; },
+      point:(G,B,T)=>T.data.sett?{verts:[T.data.sett]}:null,
+      done:(G,B,T)=>!T.data.sett || Object.values(G.buildings).filter(b=>b.p===0).length>=3},
+    {next:true, spot:'city', t:'<b>עיר.</b> אפשר לשדרג יישוב לעיר: 2 חיטה + 3 אבן. עיר שווה 2 נקודות ומפיקה כפול.'},
+    {next:true, spot:'dev', t:'<b>קלף פיתוח.</b> עולה צמר + חיטה + אבן. יש בו אביר (מזיז את השודד), בניית דרכים, שנת שפע, מונופול או נקודת ניצחון חסויה.'},
+    {next:true, spot:'trade', t:'<b>מסחר.</b> מול הבנק: 4 קלפים מאותו סוג תמורת קלף אחד לבחירתכם, ובנמל 3:1 או 2:1. אפשר גם לסחור עם שחקנים בכל יחס שתסכימו עליו.'},
+    {next:true, btn:{label:'הוציאו 7 לדוגמה', fn:()=>{
+        const G=ST.G,B=ST.B,T=ST.tut;
+        T.data.robber0=G.robber;
+        /* a hex next to the other player's house, away from ours, so the block and the steal are easy to see */
+        const theirs=Object.keys(G.buildings).filter(v=>G.buildings[v].p===1);
+        const mineHex={}; Object.keys(G.buildings).filter(v=>G.buildings[v].p===0).forEach(v=>B.verts[v].hexes.forEach(h=>mineHex[h]=1));
+        const cand=[]; theirs.forEach(v=>B.verts[v].hexes.forEach(hid=>{ const h=B.hexById[hid];
+          if(h&&hid!==G.robber&&h.num&&canPlaceRobber(G,B,hid,0)&&!mineHex[hid]) cand.push(h); }));
+        cand.sort((a,b)=>PIP(b.num)-PIP(a.num));
+        T.data.rHex=cand.length?cand[0].id:null;
+        G.robberReturn=homeSub(G); G.sub='robber'; logit(G,'יצא 7 (הדגמה)');
+        tutNext(); }},
+      t:'<b>שודד.</b> כשיוצא 7, מי שמחזיק יותר מ‑7 קלפים משליך חצי מהם. אחר כך מזיזים את השודד למשושה אחר — הוא חוסם אותו (אין הפקה) — וגונבים קלף משכן. בואו ננסה.'},
+    {t:'<b>הציבו את השודד.</b> בחרו את המשושה המסומן, שליד היישוב של שחקן הדמה, ואז בחרו קלף הפוך מהיד שלו כדי לגנוב אותו.',
+      point:(G,B,T)=>T.data.rHex?{hexes:[T.data.rHex]}:null,
+      done:(G,B,T)=>G.sub==='main' && G.robber!==T.data.robber0},
+    {spot:'primary', phase:'main', t:'<b>סיימו את התור.</b> לחצו על הכפתור הזהב. בכל תור מטילים קוביות, בונים וסוחרים, ואז מסיימים. שחקן הדמה ידלג מיד.',
+      enter:(G,B,T)=>{ T.data.tc1=G.tc; },
+      done:(G,B,T)=>G.tc>T.data.tc1},
+    {final:true, t:'<b>כל הכבוד! 🎉</b> עוד שני בונוסים: <b>הדרך הארוכה</b> (5 דרכים רצופות ויותר) ו<b>צבא גדול</b> (3 אבירים או יותר) — כל אחד שווה 2 נקודות. מי שמגיע ל‑10 נקודות בתורו מנצח. בהצלחה!'}
+  ]
+};
+
 /* ---------------- Cities & Knights ---------------- */
 TUTS.ck = {
   id:'ck', exp:'ck', title:'ערים ואבירים', seed:5511,
@@ -8765,7 +8975,7 @@ TUTS.seafarers = {
     {t:'<b>הציבו את שודדי הים.</b> בחרו משושה ים מסומן (כאן הוא נוגע בספינה שלכם, אז הוא היה חוסם אתכם). משושה ביבשה יזיז את השודד הרגיל.',
       point:(G,B,T)=>T.data.pHex?{hexes:[T.data.pHex]}:null,
       done:(G,B,T)=>G.sub!=='robber' && (G.pirate!==T.data.pirate0||G.robber!==T.data.robber0)},
-    {final:true, t:'<b>כל הכבוד! 🎉</b> למדתם: ספינות ושרשראות, יישוב על אי חדש (+2 נקודות), הזזת ספינה פתוחה ושודדי ים. בכל משחק המפה נוצרת מחדש, ולכן כל אי והמרחקים ביניהם שונים. הניצחון בימאים הוא ב־12 נקודות.'}
+    {final:true, t:'<b>כל הכבוד! 🎉</b> למדתם: ספינות ושרשראות, יישוב על אי חדש (+2 נקודות), הזזת ספינה פתוחה ושודדי ים. בכל משחק המפה נוצרת מחדש, ולכן כל אי והמרחקים ביניהם שונים. הניצחון בימאים הוא ב־12 נקודות. גם שחקני המחשב מזיזים ספינות ומשתמשים בשודדי הים, לפי אותם כללים.'}
   ]
 };
 function tutNextShip(G,T){
@@ -8876,8 +9086,9 @@ function renderCoach(){
   const mk=(label,cls,fn)=>{ const b=document.createElement('button'); b.className='btn '+cls; b.textContent=label; b.onclick=fn; bt.appendChild(b); return b; };
   if(st.final){
     mk('חזרה לתפריט','',()=>leaveGame());
-    mk('משחק אמיתי עם ההרחבה','gold',()=>{ const e=T.def.exp; leaveGame(); sel[e]=true; buildExpList();
+    if(T.def.exp) mk('משחק אמיתי עם ההרחבה','gold',()=>{ const e=T.def.exp; leaveGame(); sel[e]=true; buildExpList();
       toast('ההרחבה הופעלה — בחרו שחקנים והתחילו',3200); });
+    else mk('למשחק אמיתי','gold',()=>{ leaveGame(); toast('בחרו שחקנים והתחילו',2800); });
   } else if(st.btn){ mk(st.btn.label,'gold',st.btn.fn); }
   else if(st.next){ mk('המשך','gold',()=>tutNext()); }
   c.querySelector('#coachX').onclick=()=>leaveGame();
@@ -9100,6 +9311,12 @@ function buildExpList(){
     list.appendChild(d);
   });
 }
+/* a "try the demo game" button anywhere in the page (e.g. at the bottom of the rules summary) */
+document.addEventListener('click',e=>{
+  const b=e.target.closest && e.target.closest('[data-starttut]'); if(!b) return;
+  e.stopPropagation();
+  startTutorial(b.dataset.starttut);
+});
 /* ask "בן או בת?" — used for names that could be either, or that we do not know */
 function askGender(name,cb){
   if(LANG==='en'){ cb('m'); return; }          /* English has no gendered wording */

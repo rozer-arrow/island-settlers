@@ -63,6 +63,65 @@ function seaPlan(G,B){
 
 const TUTS = {};
 
+/* ---------------- The basics (no expansion) ---------------- */
+TUTS.base = {
+  id:'base', exp:null, title:'חוקי הבסיס', seed:7,
+  cfg:{players:2, balanced:true, target:10},
+  setup(G,B,T){
+    tutSetup(G,B);
+    G.players.forEach(p=>RES.forEach(r=>p.res[r]=0));
+    /* the scripted roll lands on a number next to our own settlement */
+    const mine=Object.keys(G.buildings).filter(v=>G.buildings[v].p===0);
+    const best=bestOf(mine,v=>vertexScore(G,B,v,0,TUT_LVL),TUT_LVL);
+    const h=tutHexNear(G,B,best,['forest','hills','pasture','fields','mountains']);
+    T.data.rollHex=h?h.id:null;
+    G.forced=[tutPair(h?h.num:8)];
+    tutTop(G.players[1],{wood:1,brick:1,sheep:1,wheat:1});     /* so there is a card to steal later */
+  },
+  steps:[
+    {next:true, t:'<b>ברוכים הבאים למשחק דמה!</b> שני שחקנים, שום דבר כאן לא נספר, ואפשר לנסות הכול. אתם האדומים. נעבור על חוקי הבסיס צעד אחרי צעד: קוביות, בנייה, מסחר, שודד וניצחון.'},
+    {spot:'primary', phase:'roll', point:(G,B,T)=>T.data.rollHex?{hexes:[T.data.rollHex]}:null,
+      t:'<b>הטילו את הקוביות.</b> כל משושה שהמספר שלו יצא מפיק משאב לכל יישוב שנוגע בו (עיר מפיקה 2). הפעם המספר יצא על משושה שליד היישוב שלכם — הוא מסומן.',
+      done:G=>(G.rollId||0)>=1},
+    {next:true, t:'<b>קיבלתם משאב!</b> יש חמישה סוגים: עץ, לבנה, צמר, חיטה ואבן. הם ביד שלכם, למטה. עכשיו אפשר לבנות — העלות מופיעה על כל כפתור.'},
+    {spot:'road', t:'<b>דרך.</b> עולה עץ + לבנה. לחצו <b>"דרך"</b> והניחו אותה על הקשת המסומנת. דרכים מחברות את היישובים שלכם ומובילות למקומות חדשים.',
+      enter:(G,B,T)=>{ tutTop(G.players[0],{wood:1,brick:1});
+        const legal=legalRoadSpots(G,B,0,false);
+        T.data.road=legal.length?bestOf(legal,e=>roadScore(G,B,e,0,TUT_LVL),TUT_LVL):null; },
+      point:(G,B,T)=>(T.data.road&&!G.roads[T.data.road])?{edges:[T.data.road]}:null,
+      done:G=>Object.values(G.roads).filter(r=>r.p===0).length>=3},
+    {spot:'sett', t:'<b>יישוב.</b> עולה עץ + לבנה + צמר + חיטה. לחצו <b>"יישוב"</b> והניחו אותו בצומת המסומן — הוא שווה נקודה ומפיק משאבים. אסור ליישב בצומת שצמוד ליישוב אחר (חוק המרחק).',
+      enter:(G,B,T)=>{ tutTop(G.players[0],{wood:1,brick:1,sheep:1,wheat:1});
+        const spots=legalSettleSpots(G,B,0,false);
+        T.data.sett=spots.length?bestOf(spots,v=>vertexScore(G,B,v,0,TUT_LVL),TUT_LVL):null; },
+      point:(G,B,T)=>T.data.sett?{verts:[T.data.sett]}:null,
+      done:(G,B,T)=>!T.data.sett || Object.values(G.buildings).filter(b=>b.p===0).length>=3},
+    {next:true, spot:'city', t:'<b>עיר.</b> אפשר לשדרג יישוב לעיר: 2 חיטה + 3 אבן. עיר שווה 2 נקודות ומפיקה כפול.'},
+    {next:true, spot:'dev', t:'<b>קלף פיתוח.</b> עולה צמר + חיטה + אבן. יש בו אביר (מזיז את השודד), בניית דרכים, שנת שפע, מונופול או נקודת ניצחון חסויה.'},
+    {next:true, spot:'trade', t:'<b>מסחר.</b> מול הבנק: 4 קלפים מאותו סוג תמורת קלף אחד לבחירתכם, ובנמל 3:1 או 2:1. אפשר גם לסחור עם שחקנים בכל יחס שתסכימו עליו.'},
+    {next:true, btn:{label:'הוציאו 7 לדוגמה', fn:()=>{
+        const G=ST.G,B=ST.B,T=ST.tut;
+        T.data.robber0=G.robber;
+        /* a hex next to the other player's house, away from ours, so the block and the steal are easy to see */
+        const theirs=Object.keys(G.buildings).filter(v=>G.buildings[v].p===1);
+        const mineHex={}; Object.keys(G.buildings).filter(v=>G.buildings[v].p===0).forEach(v=>B.verts[v].hexes.forEach(h=>mineHex[h]=1));
+        const cand=[]; theirs.forEach(v=>B.verts[v].hexes.forEach(hid=>{ const h=B.hexById[hid];
+          if(h&&hid!==G.robber&&h.num&&canPlaceRobber(G,B,hid,0)&&!mineHex[hid]) cand.push(h); }));
+        cand.sort((a,b)=>PIP(b.num)-PIP(a.num));
+        T.data.rHex=cand.length?cand[0].id:null;
+        G.robberReturn=homeSub(G); G.sub='robber'; logit(G,'יצא 7 (הדגמה)');
+        tutNext(); }},
+      t:'<b>שודד.</b> כשיוצא 7, מי שמחזיק יותר מ‑7 קלפים משליך חצי מהם. אחר כך מזיזים את השודד למשושה אחר — הוא חוסם אותו (אין הפקה) — וגונבים קלף משכן. בואו ננסה.'},
+    {t:'<b>הציבו את השודד.</b> בחרו את המשושה המסומן, שליד היישוב של שחקן הדמה, ואז בחרו קלף הפוך מהיד שלו כדי לגנוב אותו.',
+      point:(G,B,T)=>T.data.rHex?{hexes:[T.data.rHex]}:null,
+      done:(G,B,T)=>G.sub==='main' && G.robber!==T.data.robber0},
+    {spot:'primary', phase:'main', t:'<b>סיימו את התור.</b> לחצו על הכפתור הזהב. בכל תור מטילים קוביות, בונים וסוחרים, ואז מסיימים. שחקן הדמה ידלג מיד.',
+      enter:(G,B,T)=>{ T.data.tc1=G.tc; },
+      done:(G,B,T)=>G.tc>T.data.tc1},
+    {final:true, t:'<b>כל הכבוד! 🎉</b> עוד שני בונוסים: <b>הדרך הארוכה</b> (5 דרכים רצופות ויותר) ו<b>צבא גדול</b> (3 אבירים או יותר) — כל אחד שווה 2 נקודות. מי שמגיע ל‑10 נקודות בתורו מנצח. בהצלחה!'}
+  ]
+};
+
 /* ---------------- Cities & Knights ---------------- */
 TUTS.ck = {
   id:'ck', exp:'ck', title:'ערים ואבירים', seed:5511,
@@ -162,7 +221,7 @@ TUTS.seafarers = {
     {t:'<b>הציבו את שודדי הים.</b> בחרו משושה ים מסומן (כאן הוא נוגע בספינה שלכם, אז הוא היה חוסם אתכם). משושה ביבשה יזיז את השודד הרגיל.',
       point:(G,B,T)=>T.data.pHex?{hexes:[T.data.pHex]}:null,
       done:(G,B,T)=>G.sub!=='robber' && (G.pirate!==T.data.pirate0||G.robber!==T.data.robber0)},
-    {final:true, t:'<b>כל הכבוד! 🎉</b> למדתם: ספינות ושרשראות, יישוב על אי חדש (+2 נקודות), הזזת ספינה פתוחה ושודדי ים. בכל משחק המפה נוצרת מחדש, ולכן כל אי והמרחקים ביניהם שונים. הניצחון בימאים הוא ב־12 נקודות.'}
+    {final:true, t:'<b>כל הכבוד! 🎉</b> למדתם: ספינות ושרשראות, יישוב על אי חדש (+2 נקודות), הזזת ספינה פתוחה ושודדי ים. בכל משחק המפה נוצרת מחדש, ולכן כל אי והמרחקים ביניהם שונים. הניצחון בימאים הוא ב־12 נקודות. גם שחקני המחשב מזיזים ספינות ומשתמשים בשודדי הים, לפי אותם כללים.'}
   ]
 };
 function tutNextShip(G,T){
@@ -273,8 +332,9 @@ function renderCoach(){
   const mk=(label,cls,fn)=>{ const b=document.createElement('button'); b.className='btn '+cls; b.textContent=label; b.onclick=fn; bt.appendChild(b); return b; };
   if(st.final){
     mk('חזרה לתפריט','',()=>leaveGame());
-    mk('משחק אמיתי עם ההרחבה','gold',()=>{ const e=T.def.exp; leaveGame(); sel[e]=true; buildExpList();
+    if(T.def.exp) mk('משחק אמיתי עם ההרחבה','gold',()=>{ const e=T.def.exp; leaveGame(); sel[e]=true; buildExpList();
       toast('ההרחבה הופעלה — בחרו שחקנים והתחילו',3200); });
+    else mk('למשחק אמיתי','gold',()=>{ leaveGame(); toast('בחרו שחקנים והתחילו',2800); });
   } else if(st.btn){ mk(st.btn.label,'gold',st.btn.fn); }
   else if(st.next){ mk('המשך','gold',()=>tutNext()); }
   c.querySelector('#coachX').onclick=()=>leaveGame();

@@ -32,6 +32,12 @@ function buildExpList(){
     list.appendChild(d);
   });
 }
+/* a "try the demo game" button anywhere in the page (e.g. at the bottom of the rules summary) */
+document.addEventListener('click',e=>{
+  const b=e.target.closest && e.target.closest('[data-starttut]'); if(!b) return;
+  e.stopPropagation();
+  startTutorial(b.dataset.starttut);
+});
 /* ask "בן או בת?" — used for names that could be either, or that we do not know */
 function askGender(name,cb){
   if(LANG==='en'){ cb('m'); return; }          /* English has no gendered wording */
