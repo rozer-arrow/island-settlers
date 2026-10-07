@@ -59,6 +59,29 @@ function vertexScore(G,B,vid,pi,lvl){
   }
   return score;
 }
+/* The hard computer's opening: judge a corner by what it ADDS to what the player already has.
+   The first settlement is scored by its own corner, with a little extra for resources that are rare on this board.
+   The second one also completes the first: resources still missing, and numbers not already covered.
+   (The expert does more — it plans the pair in advance and aims for all five resources.) */
+const H_OPEN_NEW_KIND=1.8, H_OPEN_SAME_NUMBER=1.1, H_OPEN_RARE=0.6;
+function hardOpenScore(G,B,vid,pi,lvl){
+  let s=vertexScore(G,B,vid,pi,lvl);
+  const v=B.verts[vid]; if(!v) return s;
+  const prod=xProd(G,B,pi), have=RES.some(r=>prod[r]>0);
+  const rare=xScarcity(B), mine={};
+  for(const k in G.buildings){ const b=G.buildings[k]; if(b.p!==pi) continue;
+    for(const hid of B.verts[k].hexes){ const h=B.hexById[hid]; if(h&&h.num) mine[h.num]=1; } }
+  const seen={};
+  for(const hid of v.hexes){
+    const h=B.hexById[hid]; if(!h) continue; const r=TERRAIN_RES[h.terrain]; if(!r||r==='gold') continue;
+    s+=PIP(h.num)*Math.max(0,(rare[r]||1)-1)*H_OPEN_RARE;                 /* rare on this board: worth a bit more */
+    if(have){
+      if(!(prod[r]>0) && !seen[r]){ s+=H_OPEN_NEW_KIND*(r==='ore'||r==='wheat'?1.15:1); seen[r]=1; }
+      if(h.num && mine[h.num]) s-=H_OPEN_SAME_NUMBER;                     /* same number twice: both settlements live and die on the same rolls */
+    }
+  }
+  return s;
+}
 function bestOf(list,fn,lvl){
   if(!list.length) return null;
   const scored=list.map(x=>({x,s:fn(x)})).sort((a,b)=>b.s-a.s);
@@ -99,7 +122,7 @@ function botAct(){
   switch(nd.kind){
     case 'setupS': {
       const spots=legalSettleSpots(G,B,pi,true);
-      const vid=bestOf(spots,v=>vertexScore(G,B,v,pi,lvl),lvl);
+      const vid=bestOf(spots,v=>lvl.id==='hard'?hardOpenScore(G,B,v,pi,lvl):vertexScore(G,B,v,pi,lvl),lvl);
       placeSetupSettlement(G,B,vid); buildAnim[vid]=T;
       spawnBurst(B.verts[vid].x,B.verts[vid].y,colOf(G,pi).hex,14); SFX.build('sett');
       return afterAction();

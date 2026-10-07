@@ -153,7 +153,11 @@ function longestFor(G,B,pIdx){
   return best;
 }
 function updateArmy(G){
+  /* the holder keeps the army until someone else has MORE knights than they do — a tie never moves it,
+     so the search starts from the current holder and not from seat 0 */
+  const hold=G.army.p;
   let bp=-1,bn=2;
+  if(hold>=0 && G.players[hold]){ bp=hold; bn=Math.max(2,G.players[hold].knights); }
   G.players.forEach(p=>{ if(p.knights>bn){bn=p.knights;bp=p.idx;} });
   if(bp>=0 && bp!==G.army.p){ G.army={p:bp,n:bn}; logit(G,`${G.players[bp].name} מחזיק בצבא הגדול (${bn})`); }
   else if(bp>=0) G.army={p:bp,n:bn};

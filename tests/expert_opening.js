@@ -3,7 +3,7 @@
    Four experts sit at the table; for each of them we look at the starting position right after the
    opening. Before the fix the expert had all five resources in only about a third of the cases. */
 const fs=require('fs');const {JSDOM,VirtualConsole}=require('jsdom');
-const N=+process.argv[2]||20;
+const N=+process.argv[2]||40;   /* 160 starting positions: enough that a lucky or unlucky run does not flip the verdict */
 let html=fs.readFileSync(process.env.GAME||require('path').join(__dirname,'..','island.html'),'utf8');
 const from='\n})();\n</script>';
 if(html.indexOf(from)<0){ console.error('FAIL: cannot find the end of the game script'); process.exit(2); }
