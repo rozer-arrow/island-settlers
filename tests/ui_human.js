@@ -30,9 +30,12 @@ const out=[]; const ok=(c,m)=>out.push((c?'  ✓ ':'  ✗ FAIL ')+m);
   $$('#countSeg button').find(b=>b.dataset.n==='3').click(); await sleep(5);
   d.seats[0].bot=null; d.seats[1].bot='expert'; d.seats[2].bot='expert';
   $('#startLocal').click(); await sleep(5); const ig=$('#introGo'); if(ig) ig.click();
-  const G=d.ST.G; let guard=0, myTurns=0, offerTested=false;
+  const G=d.ST.G; let guard=0, myTurns=0, offerTested=false, tradeAsked=0, lastAsk=null, uniqAsks=0;
   while(G.phase!=='over' && guard++<4000 && G.round<40){
     const nd=d.currentNeed(G), me=G.players[nd.who];
+    /* an expert asked the person for a trade: answer it (yes), so the game can go on */
+    { const pt=$('#pickTitle'); if(d.ST.busy && pt && /יש לך הצעה/.test(pt.textContent) && $('#sheetPick').classList.contains('show')){ const yb=$$('#pickBody button')[0]; if(yb){ yb.click(); tradeAsked++; } } }
+    { const xa=G.xAskedHuman&&G.xAskedHuman[0]; if(xa!==undefined && xa!==lastAsk){ lastAsk=xa; uniqAsks++; } }
     if(!me.bot){
       const cu=$('#curtain'); if(cu){ const b=cu.querySelector('button'); if(b) b.click(); }
       if((nd.kind==='setupS'||nd.kind==='setupR'||nd.kind==='robber'||nd.kind==='freeroad') && d.ST.place && d.ST.place.legal.length){ d.tapPlace(d.ST.place.legal[0]); d.onAction('confirmplace'); }
@@ -51,6 +54,7 @@ const out=[]; const ok=(c,m)=>out.push((c?'  ✓ ':'  ✗ FAIL ')+m);
     const sc=$('#stealOv .scard:not(.dim):not(.chosen)'); if(sc) sc.click();
     await sleep(6);
   }
+  console.log('  (המומחים שאלו את השחקן על עסקה '+uniqAsks+' פעמים, בסיבוב '+G.round+')');
   ok(G.phase==='over' || G.round>=10,'המשחק התקדם ('+G.phase+', סיבוב '+G.round+', '+myTurns+' תורות שלי)');
   ok(Object.values(G.buildings).filter(b=>G.players[b.p].bot).length>=4,'המחשבים בנו ('+Object.values(G.buildings).filter(b=>G.players[b.p].bot).length+' מבנים)');
   console.log(out.join('\n')); console.log('errors:',errs.length?[...new Set(errs)].slice(0,4):'none'); process.exit(0); })();

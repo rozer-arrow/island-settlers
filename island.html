@@ -6290,6 +6290,7 @@ function botMoveShip(G,B,pi,lvl){
    road, public scores, how many cards each player holds and what they produce. It never looks
    at anyone's hidden hand or development cards, the deck, or future dice.
    ========================================================= */
+const X_PORT_MULT=1.0;
 const XBASE={wood:1.0,brick:1.0,sheep:0.8,wheat:1.1,ore:1.05,gold:1.5};
 const X_CACHE=new WeakMap();
 /* how rare each resource is on this particular board: a scarce resource is worth more */
@@ -6339,8 +6340,8 @@ function xVertexValue(G,B,vid,pi,prodNow){
   if(v.port){
     const after={...prod}; for(const r in kinds) after[r]=(after[r]||0)+kinds[r];
     const total=RES.reduce((a,r)=>a+(after[r]||0),0);
-    if(v.port==='any') val += 0.8 + total*0.045;
-    else val += Math.min(4.5,(after[v.port]||0)*0.33);
+    if(v.port==='any') val += (0.8 + total*0.045)*X_PORT_MULT;
+    else val += Math.min(4.5*X_PORT_MULT,(after[v.port]||0)*0.33*X_PORT_MULT);
   }
   /* room to grow: good free corners two steps away */
   let room=0;
@@ -6557,6 +6558,65 @@ function xAcceptOffer(G,pi,o){
   if(now<before) return true;
   let get=0,give=0; RES.forEach(r=>{ get+=(o.give[r]||0)*xResWeight(G,B,pi,r); give+=(o.want[r]||0)*xResWeight(G,B,pi,r)*((goal.cost[r]||0)?1.8:1); });
   return now===before && get>=give*1.35;
+}
+/* ---- proposing a trade to another player (limited: it must finish a build, and not every turn) ----
+   A real player asks around when one card short — but not every single move. At most one ask
+   per turn, and then not again for a few rounds. Only public information picks who to ask:
+   card counts and what each player produces. Their answer is the only thing we learn. */
+const X_TRADE_GAP=2, X_HUMAN_GAP=4, X_PLAYER_TRADES=true;
+function xTradeCandidate(G,B,pi){
+  const p=G.players[pi];
+  if(G.round-((G.xTradeAt||{})[pi]??-99)<X_TRADE_GAP) return null;
+  const goal=xGoal(G,B,pi)[0]; if(!goal || goal.missing<1 || goal.missing>3) return null;
+  if(xTradePlan(G,B,pi,goal.cost)) return null;                          /* the bank/port already covers it */
+  const needR=RES.filter(r=>(goal.cost[r]||0)>p.res[r]).sort((a,b)=>xEstimateHeld(G,B,pi,b)-xEstimateHeld(G,B,pi,a))[0];
+  if(!needR) return null;
+  const spare=RES.filter(r=>r!==needR && p.res[r]-(goal.cost[r]||0)>=1).sort((a,b)=>(p.res[b]-(goal.cost[b]||0))-(p.res[a]-(goal.cost[a]||0)))[0];
+  if(!spare) return null;
+  const asks=G.players.map((o,i)=>i).filter(i=>i!==pi && totalCards(G.players[i])>0 && xThreat(G,pi,i)<3.2)
+    .filter(i=>G.players[i].bot || G.round-((G.xAskedHuman||{})[i]??-99)>=X_HUMAN_GAP)   /* a person is not pestered */
+    .sort((a,b)=>(G.players[a].bot?0:1)-(G.players[b].bot?0:1) || totalCards(G.players[b])-totalCards(G.players[a]));
+  if(!asks.length) return null;
+  /* one card short of the build: sweeten it with a second spare card if we have one */
+  const extra = goal.missing===1 && p.res[spare]-(goal.cost[spare]||0)>=2;
+  return {give:{[spare]:1}, give2:extra?{[spare]:2}:null, want:{[needR]:1}, asks};
+}
+function xProposeTrade(G,B,pi){
+  if(ST.mode!=='local' || isCK(G) || G.cfg.seafarers) return false;
+  const c=xTradeCandidate(G,B,pi); if(!c) return false;
+  const p=G.players[pi];
+  G.xTradeAt=G.xTradeAt||{}; G.xTradeAt[pi]=G.round;
+  c.cur=c.give;
+  const settle=i=>{ const o=G.players[i];
+    const gv2=c.cur||c.give;
+    G.offer={from:pi,give:gv2,want:c.want,open:true,replies:{}};
+    const ok=settleOffer(G,i); G.offer=null;
+    if(ok){ SFX.coins(); toast(`${p.name} סחר עם ${o.name}: נתן ${fmtObj(gv2)}, קיבל ${fmtObj(c.want)}`,2200); }
+    return ok; };
+  const tryNext=k=>{
+    if(k>=Math.min(2,c.asks.length)){ afterAction(); return; }
+    const i=c.asks[k], o=G.players[i];
+    if(RES.some(r=>o.res[r]<(c.want[r]||0))){ tryNext(k+1); return; }        /* they do not have it */
+    if(o.bot){
+      for(const g of [c.give,c.give2]){ if(!g) continue;
+        c.cur=g;
+        if(botAcceptsOffer(G,i,{from:pi,give:g,want:c.want,open:true,replies:{}}) && settle(i)){ afterAction(); return; } }
+      tryNext(k+1); return; }
+    /* a person at the table: ask them, and wait for the answer */
+    G.xAskedHuman=G.xAskedHuman||{}; G.xAskedHuman[i]=G.round;
+    c.cur=c.give;
+    ST.busy=true;
+    const body=$('#pickBody'); body.innerHTML='';
+    $('#pickTitle').textContent=o.name+', יש לך הצעה';
+    $('#pickSub').textContent=`${p.name} נותן ${fmtObj(c.give)} ומבקש ${fmtObj(c.want)}`;
+    const yes=document.createElement('button'); yes.className='btn gold wide'; yes.style.marginBottom='8px'; yes.textContent=agreeWord(o);
+    const no=document.createElement('button'); no.className='btn wide'; no.textContent=notInterested(o);
+    yes.onclick=()=>{ closeAllSheets(); ST.busy=false; if(settle(i)) afterAction(); else tryNext(k+1); };
+    no.onclick=()=>{ closeAllSheets(); ST.busy=false; tryNext(k+1); };
+    body.append(yes,no); openSheet('sheetPick');
+  };
+  tryNext(0);
+  return true;
 }
 /* ---- the opening ---- */
 /* the starting position: strong numbers (6 and 8 are rolled most), and all five resources between the
@@ -6795,6 +6855,8 @@ function xMain(G,B,pi,lvl,special){
       if(buyDev(G)){ SFX.buyCard(); devCardFly(pi,noteDeed(G,'dev')); return afterAction(); }
     }
   }
+  /* 3b. one card short of a build: ask around, once in a while */
+  if(!special && X_PLAYER_TRADES && xProposeTrade(G,B,pi)) return;
   /* 4. bank and port trades — only when they finish a build this turn */
   for(const g of goals){
     if(g.missing===0) continue;
