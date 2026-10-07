@@ -130,6 +130,17 @@ function xThreat(G,pi,o){
   if(vp+hidden>=target-1) t+=2.5;
   return t;
 }
+/* mercy: the more often someone was hit by the robber lately, the less we pile on them —
+   unless they are about to win, then every hit counts. A game where one player is robbed
+   again and again is no fun for that player. */
+function xFair(G,pi,o){
+  const h=G.robHist||[]; let n=0;
+  for(let i=h.length-1;i>=Math.max(0,h.length-6);i--) if(h[i].vic===o) n++;
+  if(vpPublic(G,o)>=(G.cfg.target||10)-2) return 1;
+  let f=Math.pow(0.55,n);
+  if(vpPublic(G,o)<=2 && (G.round||0)<=8) f*=0.75;               /* don't kick someone who has barely started */
+  return f;
+}
 /* public estimate of how many of a resource the others hold: their card counts spread
    by what their buildings produce (no peeking at the actual hands) */
 function xEstimateHeld(G,B,pi,r){
@@ -203,9 +214,9 @@ function xRobberHexScore(G,B,pi,hid,withSteal){
     const b=G.buildings[vKey(hexCorner(c,i))]; if(!b) continue;
     const m=b.t==='c'?2:1, pp=PIP(h.num)*m*(r?xScarcity(B)[r]||1:1);
     if(b.p===pi){ s-=pp*3.2; continue; }
-    s+=pp*xThreat(G,pi,b.p);
+    s+=pp*xThreat(G,pi,b.p)*xFair(G,pi,b.p);
     const cards=totalCards(G.players[b.p]);
-    if(cards>0 && !(G.cfg.friendly && vpPublic(G,b.p)<=2)) stealBest=Math.max(stealBest,Math.min(cards,9)*0.35*xThreat(G,pi,b.p));
+    if(cards>0 && !(G.cfg.friendly && vpPublic(G,b.p)<=2)) stealBest=Math.max(stealBest,Math.min(cards,9)*0.35*xThreat(G,pi,b.p)*xFair(G,pi,b.p));
   }
   return s+(withSteal?stealBest:0);
 }
@@ -231,7 +242,7 @@ function xRobberKeepsPressure(G,B,pi){
   return blockNew>0 && blockNew>=blockNow*0.7;
 }
 function xVictim(G,list,pi){
-  return list.slice().sort((a,b)=>(xThreat(G,pi,b)*2+totalCards(G.players[b])*0.3)-(xThreat(G,pi,a)*2+totalCards(G.players[a])*0.3))[0];
+  return list.slice().sort((a,b)=>(xThreat(G,pi,b)*xFair(G,pi,b)*2+totalCards(G.players[b])*0.3)-(xThreat(G,pi,a)*xFair(G,pi,a)*2+totalCards(G.players[a])*0.3))[0];
 }
 /* ---- keeping the right cards on a 7 ---- */
 function xDiscard(G,B,pi,n){

@@ -345,6 +345,9 @@ function moveRobber(G,B,hexId,victim,key){
   const p=P(G);
   if(victim!=null && victim>=0) stealFrom(G,p,victim,key);
   else logit(G,`${p.name} הזיז את השודד`);
+  /* who was hit lately: the expert uses it so it doesn't pile on the same player again and again */
+  (G.robHist=G.robHist||[]).push({by:p.idx,vic:(victim!=null&&victim>=0)?victim:-1,r:G.round||0});
+  if(G.robHist.length>12) G.robHist.shift();
   G.sub = G.robberReturn || homeSub(G);
   G.robberReturn = null;
   G.pendingSteal = null; G.stealPirate = false;
