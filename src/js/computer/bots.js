@@ -243,6 +243,20 @@ function robberHitsMe(G,B,pi){
   for(let i=0;i<6;i++){ const b=G.buildings[vKey(hexCorner(c,i))]; if(b&&b.p===pi) return true; }
   return false;
 }
+/* "קשה" ב-1 על 1: חוסם בכוח רק כשהיריב באמת מאיים (מוביל, או קרוב לניצחון). אחרת משחק לעצמו. */
+function hardOneOnOne(G,lvl){ return lvl.id==='hard' && G.players.length===2 && !isCK(G); }
+function hardOppThreat(G,pi){
+  const o=G.players[1-pi]; if(!o) return false;
+  const vo=vpPublic(G,o.idx), vm=vpPublic(G,pi);
+  return vo>vm || vo>=(G.cfg.target||10)-2;
+}
+function hardKnightWorth(G,pi){
+  const p=G.players[pi];
+  if(hardOppThreat(G,pi)) return true;
+  const a=G.army||{p:-1,n:0};
+  const need=a.p===pi?0:Math.max(2,a.n||0);              /* knights I need to hold or take the army */
+  return a.p!==pi && p.knights+1>need && p.knights+1>=3;
+}
 function robberScore(G,B,hid,pi,lvl){
   const h=B.hexById[hid]; if(!h) return -99;
   const c={x:h.x,y:h.y};
@@ -253,7 +267,10 @@ function robberScore(G,B,hid,pi,lvl){
     const mult=b.t==='c'?2:1;
     if(b.p===pi){ mine+=PIP(h.num)*mult*4; continue; }
     let w=PIP(h.num)*mult;
-    if(lvl.block>0 && vpPublic(G,b.p)>=lead-1) w*= (1+lvl.block);
+    if(lvl.block>0){
+      if(hardOneOnOne(G,lvl)){ if(hardOppThreat(G,pi)) w*=(1+lvl.block); }
+      else if(vpPublic(G,b.p)>=lead-1) w*= (1+lvl.block);
+    }
     if(totalCards(G.players[b.p])>0) w+=1.5;
     s+=w;
   }
@@ -367,7 +384,7 @@ function botMain(G,B,pi,lvl,special){
     for(let i=0;i<p.dev.length;i++){
       if(!playableDev(G,pi,i)) continue;
       const c=p.dev[i];
-      if(c==='knight' && lvl.look>0 && (robberHitsMe(G,B,pi)||Math.random()<0.25)){ playDev(G,B,i); SFX.knight(); return afterAction(); }
+      if(c==='knight' && lvl.look>0 && (hardOneOnOne(G,lvl) ? (robberHitsMe(G,B,pi)||hardKnightWorth(G,pi)) : (robberHitsMe(G,B,pi)||Math.random()<0.25))){ playDev(G,B,i); SFX.knight(); return afterAction(); }
       if(c==='road' && p.roadsLeft>1 && legalRoadSpots(G,B,pi,false).length>1 && lvl.look>0){ playDev(G,B,i); return afterAction(); }
       if(c==='plenty' && lvl.look>0){ playDev(G,B,i); SFX.plentyCard(); return afterAction(); }
       if(c==='mono' && lvl.look>1 && Math.random()<0.5){ playDev(G,B,i); SFX.monoCard(); return afterAction(); }
