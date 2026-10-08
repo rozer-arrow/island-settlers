@@ -37,6 +37,7 @@ let failed=0; const ok=(c,msg)=>{ console.log((c?'  ✓ ':'  ✗ ')+msg); if(!c)
   const R=['wood','brick','sheep','wheat','ore'];
   let cand=null, used=null;
   for(const h of hands){
+    G.round=1; G.xTradeAt={}; G.xAskedHuman={}; ok(d.xTradeCandidate(G,B,pi)===null,'first rounds: the expert does not ask for trades');
     G.xTradeAt={}; G.xAskedHuman={}; G.round=Math.max(G.round,10);
     R.forEach(r=>{ G.players[pi].res[r]=h[r]; G.players[2].res[r]=0; }); 
     R.forEach(r=>G.players[0].res[r]=3);

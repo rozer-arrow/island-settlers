@@ -6580,9 +6580,11 @@ function xAcceptOffer(G,pi,o){
    A real player asks around when one card short — but not every single move. At most one ask
    per turn, and then not again for a few rounds. Only public information picks who to ask:
    card counts and what each player produces. Their answer is the only thing we learn. */
+const X_TRADE_FROM=4;                    /* no offers in the first rounds: the opening is for building, not for asking */
 const X_TRADE_GAP=2, X_HUMAN_GAP=4, X_PLAYER_TRADES=true;
 function xTradeCandidate(G,B,pi){
   const p=G.players[pi];
+  if((G.round||0)<X_TRADE_FROM) return null;
   if(G.round-((G.xTradeAt||{})[pi]??-99)<X_TRADE_GAP) return null;
   const goal=xGoal(G,B,pi)[0]; if(!goal || goal.missing<1 || goal.missing>3) return null;
   if(xTradePlan(G,B,pi,goal.cost)) return null;                          /* the bank/port already covers it */
@@ -6638,7 +6640,7 @@ function xProposeTrade(G,B,pi){
 /* ---- the opening ---- */
 /* the starting position: strong numbers (6 and 8 are rolled most), and all five resources between the
    two settlements — without ore or wheat there are no cities and no cards, without wood or brick no roads */
-const X_OPEN_KIND_BONUS=2.2, X_OPEN_ALL5_BONUS=3.0, X_OPEN_HOT_BONUS=1.5;
+const X_OPEN_KIND_BONUS=3.2, X_OPEN_ALL5_BONUS=6.0, X_OPEN_HOT_BONUS=1.5;
 function xOpenKinds(B,vid){
   const out={};
   for(const hid of B.verts[vid].hexes){ const h=B.hexById[hid]; const r=h&&TERRAIN_RES[h.terrain];

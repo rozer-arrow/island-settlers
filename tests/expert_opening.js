@@ -49,9 +49,9 @@ let failed=0; const ok=(c,msg)=>{ console.log((c?'  ✓ ':'  ✗ ')+msg); if(!c)
   console.log('  starting positions measured: '+n+'   average pips: '+(pips/Math.max(1,n)).toFixed(1)+'   6/8 hexes touched: '+(hot/Math.max(1,n)).toFixed(2));
   console.log('  all five resources: '+pct(all5)+'   no ore: '+pct(noOre)+'   no wheat: '+pct(noWheat));
   ok(skipped===0,'every opening finished');
-  ok(all5/n>=0.55,'at least 55% of the openings have all five resources (it used to be about a third)');
+  ok(all5/n>=0.72,'at least 72% of the openings have all five resources (it used to be about a third, then 66%)');
   ok(pips/n>=18,'the strong numbers are not given up for it (average pips at least 18, with four experts competing for the same corners)');
-  ok(noOre/n<=0.2,'no more than 20% of the openings lack ore');
+  ok(noOre/n<=0.12,'no more than 12% of the openings lack ore');
   /* the "bot" errors the game itself reports; the leaveGame in this test can cut a dice animation short */
   const real=[...new Set(errs)].filter(e=>!/productionFx/.test(e));
   ok(real.length===0,'no errors'+(real.length?': '+real.slice(0,2).join(' | '):''));
